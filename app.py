@@ -6,21 +6,14 @@ from PIL import Image
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
-# ==========================================
-# 1. CẤU HÌNH TRANG WEB
-# ==========================================
 st.set_page_config(
     page_title="Hệ thống Chẩn đoán Lao & Kháng thuốc MDR-TB",
-    page_icon="🩺",
     layout="wide"
 )
 
-st.title("🩺 Ứng Dụng AI Dự Đoán Chủng Vi Khuẩn Lao Kháng Đa Thuốc (MDR-TB)")
+st.title("Ứng dụng AI kết hợp thị giác máy tính và học máy trong chẩn đoán Lao và dự đoán nguy cơ kháng đa thuốc (MDR-TB)")
 st.markdown("---")
 
-# ==========================================
-# 2. LOAD MÔ HÌNH (BẢN TẠM MẪU CHẠY NGAY)
-# ==========================================
 @st.cache_resource
 def load_resnet_model():
     model = models.resnet18(weights=None)
@@ -42,9 +35,6 @@ resnet_model = load_resnet_model()
 rf_model = load_rf_model()
 st.sidebar.success("Đã khởi tạo mô hình AI thành công!")
 
-# ==========================================
-# 3. GIAO DIỆN NHẬP DỮ LIỆU
-# ==========================================
 col1, col2 = st.columns([1, 1])
 
 with col1:
@@ -70,14 +60,11 @@ with col2:
         smoking_num = 1 if smoking == "Có" else 0
         hiv_num = 1 if hiv_status == "Dương tính" else 0
 
-        submit_btn = st.form_submit_button("🚀 Tiến Hành Dự Đoán")
+        submit_btn = st.form_submit_button("Tiến Hành Dự Đoán")
 
-# ==========================================
-# 4. XỬ LÝ & DỰ ĐOÁN
-# ==========================================
 if submit_btn:
     if uploaded_file is None:
-        st.warning("⚠️ Vui lòng upload ảnh X-quang trước khi dự đoán!")
+        st.warning("Vui lòng upload ảnh X-quang trước khi dự đoán!")
     else:
         st.markdown("---")
         st.subheader("Kết Quả Chẩn Đoán Tích Hợp AI")
@@ -105,15 +92,15 @@ if submit_btn:
         with res_col1:
             st.metric("Tỷ lệ nghi ngờ mắc Lao (ResNet18)", f"{tb_prob * 100:.2f}%")
             if tb_prob > 0.5:
-                st.error("⚠️ Khả năng cao tổn thương phổi do Lao!")
+                st.error("Khả năng cao tổn thương phổi do Lao!")
             else:
-                st.success("✅ Hình ảnh X-quang bình thường.")
+                st.success("Hình ảnh X-quang bình thường.")
 
         with res_col2:
             st.metric("Tỷ lệ Kháng Đa Thuốc MDR-TB (Random Forest)", f"{mdr_prob * 100:.2f}%")
             if mdr_prediction == 1 or mdr_prob > 0.5:
-                st.error("🚨 CẢNH BÁO: Nguy cơ cao kháng thuốc MDR-TB!")
+                st.error("CẢNH BÁO: Nguy cơ cao kháng thuốc MDR-TB!")
             else:
-                st.success("✅ Nguy cơ kháng thuốc thấp.")
+                st.success("Nguy cơ kháng thuốc thấp.")
 
         st.info("**Lưu ý:** Kết quả dự đoán từ AI chỉ mang tính chất tham khảo hỗ trợ bác sĩ lâm sàng.")
